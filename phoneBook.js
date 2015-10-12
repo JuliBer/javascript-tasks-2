@@ -1,52 +1,89 @@
 'use strict';
 
-var phoneBook; // Здесь вы храните записи как хотите
-
+var phoneBook=[]; // Здесь вы храните записи как хотите
+//функция создания записи
+var note=function(name,phone,email)
+{
+	this.name=name.replace;
+	this.phone=phone.replace(/[\+\-\s+\(\)]/g, '');
+	this.email = CorrectEmail(email) ? email : null;
+	this.compare = function(query)
+	{
+        return query === undefined || this.name.indexOf(query) >= 0 || this.phone.indexOf(query.replace(/[\+\-\s+\(\)]/g, '')) >= 0 || this.email.indexOf(query) >= 0;
+    }
+    this.toString = function() 
+	{
+        return this.name + ", " + this.phone + ", " + this.email;
+    }
+}
+function CorrectEmail(email) { 
+var iter = 0; 
+for (var k in email)
+    { 
+    if (email[k] === "@") 
+    { 
+        iter ++; 
+        if (iter === 2) 
+		    { 
+            return false; 
+        } 
+    } 
+} 
+var norm = /.+@.+\..+/i; 
+var address = email.match(norm); 
+if (address === null) 
+    { 
+    return false; 
+    } 
+    else 
+    {
+    return true;
+    } 
+}
 /*
    Функция добавления записи в телефонную книгу.
-   На вход может прийти что угодно, будьте осторожны.
 */
 module.exports.add = function add(name, phone, email) {
-
-    // Ваша невероятная магия здесь
-
+var correctName = /^[ _\-a-zа-я0-9]+$/i;
+var correctPhone = /^\+?\d{0,2} *(\d{3}|\(\d{3}\)) *\d{3}(-| *)?\d(-| *)?\d{3}$/;
+var correctaddress = /^[_\-a-zа-я0-9]+@[_\-a-zа-я0-9]+(\.[a-zа-я0-9]+)+$/i;
+    if(correctName.test(name)&& correctPhone.test(phone)&& correctaddress.test(email)) 
+	{
+        phoneBook.push(new note(name, phone, email));
+    }
 };
 
 /*
    Функция поиска записи в телефонную книгу.
-   Поиск ведется по всем полям.
 */
 module.exports.find = function find(query) {
-
-    // Ваша удивительная магия здесь
-
+	var iteration=0;
+    for (var count=0; count<phoneBook.length; count++) 
+	{
+        if (phoneBook[count].compare(query)) 
+		{
+            console.log(phoneBook[count].toString());
+            iteration++;
+        }
+    }
+    console.log("Найдено " + iteration + "записей");
 };
 
 /*
    Функция удаления записи в телефонной книге.
 */
 module.exports.remove = function remove(query) {
-
-    // Ваша необьяснимая магия здесь
-
-};
-
-/*
-   Функция импорта записей из файла (задача со звёздочкой!).
-*/
-module.exports.importFromCsv = function importFromCsv(filename) {
-    var data = require('fs').readFileSync(filename, 'utf-8');
-
-    // Ваша чёрная магия:
-    // - Разбираете записи из `data`
-    // - Добавляете каждую запись в книгу
-};
-
-/*
-   Функция вывода всех телефонов в виде ASCII (задача со звёздочкой!).
-*/
-module.exports.showTable = function showTable() {
-
-    // Ваша чёрная магия здесь
+	var iteration= 0;
+    for (var count=0; count<phoneBook.length; count++) 
+	{
+        if (phoneBook[count].compare(query)) {
+            console.log(phoneBook[count].toString());
+            phoneBook.splice(count--, 1);
+            iteration++;
+        }
+    }
+    /* Выводим кол-во удаленных записей */
+    console.log(" Удалено " + iteration + " записей");
 
 };
+
